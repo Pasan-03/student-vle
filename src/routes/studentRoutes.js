@@ -1,51 +1,30 @@
-// src/routes/studentRoutes.js
-
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const connection = require('../config/database');
+const mysql = require('mysql');
+const db = require('../config/database'); // Adjust the path as needed
 
-// Register a new student
-router.post('/register', async (req, res) => {
+// Register route
+router.post('/register', (req, res) => {
     const { name, grade, email, password } = req.body;
 
     if (!name || !grade || !email || !password) {
         return res.status(400).json({ message: 'All fields are required' });
     }
 
-    try {
-        // Check if the email already exists
-        const checkQuery = 'SELECT * FROM students WHERE email = ?';
-        connection.query(checkQuery, [email], async (err, results) => {
-            if (err) {
-                console.error('Error checking email:', err);
-                return res.status(500).json({ message: 'Internal server error' });
-            }
+    const hashedPassword = bcrypt.hashSync(password, 10);
 
-            if (results.length > 0) {
-                return res.status(409).json({ message: 'Email already exists' });
-            }
-
-            // Hash the password
-            const hashedPassword = await bcrypt.hash(password, 10);
-
-            // Insert into the database
-            const insertQuery = 'INSERT INTO students (name, grade, email, password) VALUES (?, ?, ?, ?)';
-            connection.query(insertQuery, [name, grade, email, hashedPassword], (error) => {
-                if (error) {
-                    console.error('Error inserting data:', error);
-                    return res.status(500).json({ message: 'Internal server error' });
-                }
-                res.status(201).json({ message: 'Student registered successfully' });
-            });
-        });
-    } catch (error) {
-        console.error('Error hashing password:', error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
+    const query = 'INSERT INTO students (name, grade, email, password) VALUES (?, ?, ?, ?)';
+    db.query(query, [name, grade, email, hashedPassword], (error, results) => {
+        if (error) {
+            console.error('Error inserting data:', error);
+            return res.status(500).json({ message: 'Error inserting data' });
+        }
+        res.status(201).json({ message: 'Student registered successfully' });
+    });
 });
 
-// Login student
+// Login route
 router.post('/login', (req, res) => {
     const { email, password } = req.body;
 
@@ -54,24 +33,22 @@ router.post('/login', (req, res) => {
     }
 
     const query = 'SELECT * FROM students WHERE email = ?';
-    connection.query(query, [email], async (err, results) => {
-        if (err) {
-            console.error('Error fetching data:', err);
-            return res.status(500).json({ message: 'Internal server error' });
+    db.query(query, [email], (error, results) => {
+        if (error) {
+            console.error('Error fetching data:', error);
+            return res.status(500).json({ message: 'Error fetching data' });
         }
-
         if (results.length === 0) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
-        const user = results[0];
-        const match = await bcrypt.compare(password, user.password);
-
-        if (!match) {
-            return res.status(401).json({ message: 'Invalid email or password' });
+        const student = results[0];
+        const passwordMatch = bcrypt.compareSync(password, student.password);
+        if (passwordMatch) {
+            res.status(200).json({ message: 'Login successful' });
+        } else {
+            res.status(401).json({ message: 'Invalid email or password' });
         }
-
-        res.status(200).json({ message: 'Login successful' });
     });
 });
 
