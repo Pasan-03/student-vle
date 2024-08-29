@@ -1,23 +1,27 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background: linear-gradient(135deg, #2c3e50, #4b6cb7); /* Darker blue to purple gradient */
     margin: 0;
     padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
 }
 
 .container {
-    max-width: 600px;
-    margin: 0 auto;
+    max-width: 500px;
+    width: 100%;
     padding: 20px;
-    background-color: #fff;
+    background-color: #f5f5f5; /* Light gray background for the form container */
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); /* Slightly stronger shadow for better contrast */
     margin-top: 50px;
 }
 
 h1 {
     text-align: center;
-    color: #333;
+    color: #333; /* Dark text color */
 }
 
 form {
@@ -27,18 +31,21 @@ form {
 
 label {
     margin: 10px 0 5px;
+    color: #333; /* Dark label color */
 }
 
 input {
     padding: 10px;
     margin-bottom: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc; /* Light border for input fields */
     border-radius: 4px;
+    background-color: #fff; /* White input field background */
+    color: #333; /* Dark input text color */
 }
 
 button {
     padding: 10px;
-    background-color: #28a745;
+    background-color: #556cd6; /* Muted blue for button background */
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -46,12 +53,12 @@ button {
 }
 
 button:hover {
-    background-color: #218838;
+    background-color: #435abd; /* Slightly darker shade on hover */
 }
 
 #loginMessage, #registerMessage {
     margin-top: 10px;
-    color: red;
+    color: #ff7675; /* Soft red for messages */
     text-align: center;
 }
 
@@ -61,7 +68,7 @@ button:hover {
 }
 
 .link-text a {
-    color: #007bff;
+    color: #007bff; /* Blue color for links */
     text-decoration: none;
 }
 
